@@ -8,11 +8,15 @@ load_dotenv()
 
 # Get the API key
 api_key = os.getenv("API_KEY_AV")
+ticker = 'NVDA'
+start_date = '2024-08-01'
+end_date = '2025-01-01'
 
 print(f"Your API Key: {api_key}")  # It should print the API key
 
+
 # API URL
-url = f"https://api.polygon.io/v2/aggs/ticker/AAPL/range/1/minute/2024-08-01/2025-01-01?adjusted=true&sort=asc&limit=50000&apiKey={api_key}"
+url = f"https://api.polygon.io/v2/aggs/ticker/{ticker}/range/1/minute/{start_date}/{end_date}?adjusted=true&sort=asc&limit=50000&apiKey={api_key}"
 
 
 # Fetch the data from the API
@@ -38,12 +42,12 @@ if response.status_code == 200:
 
 
        # Display first few rows
-       print(df.head())
+       #print(df.head())
 
 
-       # Save to CSV (optional)
-       df.to_csv("AAPL_1min_data.csv", index=False)
-       print("Data saved to AAPL_1min_data.csv")
+       
+       #df.to_csv("AAPL_1min_data.csv", index=False)
+       #print("Data saved to AAPL_1min_data.csv")
    else:
        print("No results found in the API response.")
 else:
@@ -210,7 +214,11 @@ money_flow_ratio = sum_positive_flow / sum_negative_flow
 df['mfi'] = 100 - (100 / (1 + money_flow_ratio))
 
 # Optionally, remove rows with NaN values introduced by the rolling calculations.
+
 df.dropna(inplace=True)
+
+df.to_csv("AAPL_1min_data.csv", index=False)
+print(df.head())
 
 
 
