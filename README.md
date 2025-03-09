@@ -14,6 +14,7 @@
 
 This project implements an adaptive Transformer-based model designed to predict intraday stock price movements at 1-minute intervals. The Transformer model is initially trained (base model) on general historical intraday data (around 6-months of 1min) across multiple tickers and then adaptively fine-tuned in real-time for individual ticker-specific predictions. My hope is that we are able to capture the market sentiment immediately and update weights accordingly in real-time. This is too avoid having to overcomplicate data with macroeconomic metrics.
 
+I will focus here on binary prediction of the minute to minute price data. The fine-tuned model in the moment will output a single buy/sell indicator based off its prediction on future movement. Optimiser used will be cross-entropy loss befoe back propagation in real time. 
 
 ### 🎯 Goals:
 
