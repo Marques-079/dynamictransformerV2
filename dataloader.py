@@ -84,7 +84,8 @@ df['date_time'] = pd.to_datetime(df['time_stamp'], unit='ms')
 # 2. Price Momentum Features
 # -------------------------------
 # Log Return: natural log of today's close over yesterday's close.
-df['log_return'] = np.log(df['close'] / df['close'].shift(1))
+epsilon = 1e-6    # to avoid division by zero
+df['log_return'] = np.log(df['close'] / df['close'].shift(1) +  epsilon) 
 
 # Price Change Percentage: percentage change between consecutive closing prices.
 df['price_change_pct'] = (df['close'] - df['close'].shift(1)) / df['close'].shift(1) * 100
@@ -217,8 +218,14 @@ df['mfi'] = 100 - (100 / (1 + money_flow_ratio))
 
 df.dropna(inplace=True)
 
-df.to_csv("AAPL_1min_data.csv", index=False)
-print(df.head())
+df.to_csv("AAPL1_1min_data.csv", index=False)
+#print(df.head())
+
+df['price_change_pct'] = df['price_change_pct'].apply(lambda x: 1 if x > 0 else 0)
+df['price_change_pct'] = df['price_change_pct'].shift(-1)
+
+df = df.iloc[:-1]
+df = df.drop(["time_stamp", "date_time"], axis=1)
 
 
 
