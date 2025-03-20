@@ -207,10 +207,13 @@ The model demonstrates steady learning, stabilizing at **55.04% accuracy** by **
 
 # A few more features 😎
 
+<p align="center">
+  <img src="https://github.com/Marques-079/dynamictransformerV2/blob/main/images/Cosinecurve.jpg?raw=true" width="45%" />
+  <img src="https://github.com/Marques-079/dynamictransformerV2/blob/main/images/Warmupcosine.jpg?raw=true" width="45%" />
+</p>
+
+
 ![image.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/Cosinecurve.jpg?raw=true)
-
-(Graph Courtesy if ChatGPT)
-
 ![image.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/Warmupcosine.jpg?raw=true)
 
 Cosine Learning Rate Decay & Warmup
