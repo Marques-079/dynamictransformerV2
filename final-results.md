@@ -212,10 +212,6 @@ The model demonstrates steady learning, stabilizing at **55.04% accuracy** by **
   <img src="https://github.com/Marques-079/dynamictransformerV2/blob/main/images/Warmupcosine.jpg?raw=true" width="45%" />
 </p>
 
-
-![image.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/Cosinecurve.jpg?raw=true)
-![image.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/Warmupcosine.jpg?raw=true)
-
 Cosine Learning Rate Decay & Warmup
 
 To prevent the model from plateauing too early, we use **cosine learning rate decay**, which gradually reduces the learning rate over time following a cosine curve. This allows the model to make **large updates** in the early stages of training while **fine-tuning with smaller adjustments** toward the later epochs. This technique helps improve convergence and prevents overshooting optimal weights. Below is a visualization of how the learning rate evolves during training.
