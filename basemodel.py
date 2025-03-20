@@ -5,7 +5,6 @@ from tqdm import tqdm
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 import torch.nn as nn
-import torch.optim as optim
 import os
 
 # Loads in the data
@@ -80,14 +79,12 @@ class windowcompiler:
         n = len(df)
         
         for i in range(n - window_size):
-            # Grab the unscaled data for just this window
+
             window_chunk = feature_data[i : i + window_size]  
             
-            # Create a *new* scaler each time (can be MinMaxScaler or something else)
             scaler = MinMaxScaler(feature_range=(0, 1))
             window_chunk_scaled = scaler.fit_transform(window_chunk)
             
-            # Then proceed to append your time index, etc.
             window_with_time = np.hstack([window_chunk_scaled, time_index])
             X.append(window_with_time)
             y.append(label_data[i + window_size])
@@ -97,9 +94,9 @@ class windowcompiler:
         y = np.array(y)
 
         #print(f'Y IS HERE {df["price_change_pct"]}: X return is here {df[feature_cols].values[0]}')
-        print(f'Y IS HERE {y[:10]}')
-        print(X.shape)
-        print(y.shape)
+        #print(f'Y IS HERE {y[:10]}')
+        #print(X.shape)
+        #print(y.shape)
 
         
         return X, y
@@ -116,12 +113,19 @@ class windowcompiler:
         X_train, X_test = X[:split_idx], X[split_idx:]
         y_train, y_test = y[:split_idx], y[split_idx:]
 
-        print("X_train shape:", X_train.shape)
-        print("y_train shape:", y_train.shape)
-        print("X_test shape:", X_test.shape)
-        print("y_test shape:", y_test.shape)
 
-        #print(f'DEBUGING {y_test[0]}')
+
+
+        num_zeros = np.count_nonzero(y_train == 0)
+        num_ones = np.count_nonzero(y_train == 1)
+
+        # Alternatively
+        num_zeros = (y_train == 0).sum()
+        num_ones = (y_train == 1).sum()
+
+        print(f"NUMBER of zeros in y_train: {num_zeros}")
+        print(f"NUMBER of ones in y_train: {num_ones}")
+
 
         # Convert NumPy arrays to PyTorch tensors
         X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
@@ -129,8 +133,9 @@ class windowcompiler:
         X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
         y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
 
+
         #print(f' X_train is here: {X_train_tensor[0]}')
-        print(f'y_train is here: {y_train_tensor[:10]}')
+        #print(f'y_train is here: {y_train_tensor[:10]}')
         assert torch.all((y_train_tensor == 0) | (y_train_tensor == 1)), "Error: y_train_tensor contains values other than 0 and 1!"
 
 
@@ -207,17 +212,18 @@ if __name__ == "__main__":
     LEARNING_RATE = 0.0001
 
     # Transformer model hyperparameters
-    D_MODEL = 512      
+    D_MODEL = 128  
     NUM_HEADS = 4       
     NUM_LAYERS = 2     
-    DROPOUT = 0.25       
+    DROPOUT = 0.3       
 
     # Data dimensions 
     SEQ_LENGTH = 10     
     INPUT_DIM = 37  
 
 
-    tickers = ["AAPL", "GOOGL", "MSFT", "AMZN", "AMD", "CRM", "CRWD", "INTC", "INTU", "ORCL", "SHOP", "PLTR", "AVGO", "IBM", "SAP", "META", "TMUS", "T", "VZ", "QCOM", "UBER", "ADBE", "NOW"]
+    tickers = ["AAPL", "GOOGL", "MSFT", "AMZN", "AMD", "CRM", "CRWD", "INTC", "INTU", "ORCL", "SHOP", "PLTR", "AVGO", "IBM", "SAP", "META", "TMUS", "T", "VZ", "QCOM", "UBER", "ADBE", "NOW",
+              "ACN", "TXN", "ANET"]
     list_len = len(tickers)
 
     data_directory = "/Users/marcus/Documents/GitHub/dynamictransformerV2"
@@ -238,23 +244,12 @@ if __name__ == "__main__":
     print("Total number of samples in test_loader:", num_samples2)
 
 
-
-    #wc = windowcompiler(df, feature_cols, label_col)
-    #train_loader, test_loader = wc.pytorch_convert()
-
-    #for X_batch, y_batch in train_loader:
-    #    print("\nExample training batch:")
-    #   print("X_batch shape:", X_batch.shape)
-    #    print("y_batch shape:", y_batch.shape)
-    #    break
-
 class TransformerClassifier(nn.Module):
     def __init__(self, input_dim, d_model, num_heads, num_layers, dropout):
         super(TransformerClassifier, self).__init__()
         # Embedding layer to project input features to d_model dimensions
         self.embedding = nn.Linear(input_dim, d_model)
         
-        # Transformer encoder layers (using batch_first=True)
         encoder_layer = nn.TransformerEncoderLayer(
             d_model=d_model,
             nhead=num_heads,
@@ -265,11 +260,7 @@ class TransformerClassifier(nn.Module):
             encoder_layer, 
             num_layers=num_layers
         )
-        
-        # ----- Added MLP (Feed-Forward Network) Block -----
-        # This block scales up the representation to 2*d_model,
-        # applies ReLU activation, dropout and LayerNorm,
-        # then scales it back down to d_model.
+
         self.mlp = nn.Sequential(
             nn.Linear(d_model, d_model * 2),   # scale up
             nn.GELU(),
@@ -287,15 +278,15 @@ class TransformerClassifier(nn.Module):
         self.sigmoid = nn.Sigmoid()
     
     def forward(self, x):
-        # x: (batch_size, seq_length, input_dim)
-        x = self.embedding(x)  # --> (batch_size, seq_length, d_model)
-        x = self.transformer_encoder(x)  # --> (batch_size, seq_length, d_model)
-        # Use the output of the last timestep as the aggregated representation
-        x = x[:, -1, :]  # --> (batch_size, d_model)
+       
+        x = self.embedding(x) 
+        x = self.transformer_encoder(x)  
+        
+        x = x[:, -1, :]  
         # ----- Pass through the extra MLP block -----
-        x = self.mlp(x)  # --> (batch_size, d_model)
-        x = self.fc(x)   # --> (batch_size, 1)
-        x = self.sigmoid(x)  # --> (batch_size, 1) probability output
+        x = self.mlp(x)  
+        x = self.fc(x)   
+        x = self.sigmoid(x)  
         return x
     
 
@@ -315,7 +306,7 @@ T_max = NUM_EPOCHS  # or a larger value if you want a slower decay
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
     optimizer,
     T_max=T_max,
-    eta_min=1e-5
+    eta_min=1e-4
 )
 
 criterion = nn.BCELoss()  # Binary Cross Entropy Loss for classification
@@ -331,7 +322,7 @@ for epoch in range(NUM_EPOCHS):
     model.train()
     running_loss = 0.0
     for batch_X, batch_y in train_loader:
-        batch_X, batch_y = batch_X.to(device), batch_y.to(device).unsqueeze(1)  # Ensure y is (batch_size, 1)
+        batch_X, batch_y = batch_X.to(device), batch_y.to(device).unsqueeze(1)
         
         optimizer.zero_grad()
         outputs = model(batch_X)
@@ -341,7 +332,7 @@ for epoch in range(NUM_EPOCHS):
         
         running_loss += loss.item() * batch_X.size(0)
 
-    # Updating the scheduler after each epoch
+    # Updates the scheduler after each epoch
     scheduler.step()
 
     epoch_loss = running_loss / len(train_loader.dataset)
@@ -364,9 +355,3 @@ for epoch in range(NUM_EPOCHS):
     accuracy = correct / total
     print(f"Test Accuracy: {accuracy:.4f}")
 
-
-
-
-#Maybe add time decay 
-#More dropout
-#MORE data x10 at least 
