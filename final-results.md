@@ -60,7 +60,7 @@ def load_minute_data_files(ticker_list):
 
 To ensure data quality, we performed multiple **checks for NaN values and class imbalances** in our dataset. Since the model learns from patterns in stock movements, it’s crucial that both `0s` and `1s` (representing up/down price movements) are evenly distributed. I also evaluated missing values to prevent bias in training. If imbalances or NaNs were detected, adjustments such as resampling or interpolation were applied. Below is a snapshot of the checks performed on a random dataframe before finalizing the dataset.
 
-![Screenshot 2025-03-20 at 12.51.33 PM.png](Evaluation%20of%20the%20$3%20Transformer%20%F0%9F%92%B8%201bcf8928b50a806c96fad60745a5cb28/Screenshot_2025-03-20_at_12.51.33_PM.png)
+![Screenshot 2025-03-20 at 12.51.33 PM.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/1938293.jpg?raw=true)
 
 ![Screenshot 2025-03-20 at 12.20.08 PM.png](Evaluation%20of%20the%20$3%20Transformer%20%F0%9F%92%B8%201bcf8928b50a806c96fad60745a5cb28/ba935b53-102e-4566-9d4c-7549156304c0.png)
 
