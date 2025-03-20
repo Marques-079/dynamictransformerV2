@@ -60,9 +60,9 @@ def load_minute_data_files(ticker_list):
 
 To ensure data quality, we performed multiple **checks for NaN values and class imbalances** in our dataset. Since the model learns from patterns in stock movements, it’s crucial that both `0s` and `1s` (representing up/down price movements) are evenly distributed. I also evaluated missing values to prevent bias in training. If imbalances or NaNs were detected, adjustments such as resampling or interpolation were applied. Below is a snapshot of the checks performed on a random dataframe before finalizing the dataset.
 
-![Screenshot 2025-03-20 at 12.51.33 PM.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/1938293.jpg?raw=true)
+![Screenshot 2025-03-20 at 12.51.33 PM.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/Osand1sfordynamictrans.jpg?raw=true)
 
-![Screenshot 2025-03-20 at 12.20.08 PM.png](Evaluation%20of%20the%20$3%20Transformer%20%F0%9F%92%B8%201bcf8928b50a806c96fad60745a5cb28/ba935b53-102e-4566-9d4c-7549156304c0.png)
+![Screenshot 2025-03-20 at 12.20.08 PM.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/ZerosandNaNs.jpg?raw=true)
 
 ---
 
@@ -189,17 +189,17 @@ To effectively process stock data sequences, our model first applies an **embedd
 
 Small but powerful… Otherwise known as the multilayer perceptron this small function makes a HUGE difference introducing non-linearity into our data allowing it to capture far more complex relationships. We have also add a sigmoid classifier which converts our logits (prediction probabilities) into a binary 0 - 1 prediction, conveniently the same form as our labelled data.
 
-![Screenshot 2025-03-20 at 12.32.41 PM.png](Evaluation%20of%20the%20$3%20Transformer%20%F0%9F%92%B8%201bcf8928b50a806c96fad60745a5cb28/Screenshot_2025-03-20_at_12.32.41_PM.png)
+![Screenshot 2025-03-20 at 12.32.41 PM.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/1938293.jpg?raw=true)
 
 Once the architecture is in place, the model undergoes **training** using historical stock price movements. The dataset is split into training and validation sets, and the model iteratively learns by adjusting weights to minimize error. We employ the **AdamW optimizer**, which adapts learning rates dynamically, and a **binary cross-entropy loss function** to measure performance. Training is performed in mini-batches to ensure stable learning aka groups before an update, and we monitor loss reduction across epochs to track improvements.
 
-![Screenshot 2025-03-20 at 12.33.02 PM.png](Evaluation%20of%20the%20$3%20Transformer%20%F0%9F%92%B8%201bcf8928b50a806c96fad60745a5cb28/Screenshot_2025-03-20_at_12.33.02_PM.png)
+![Screenshot 2025-03-20 at 12.33.02 PM.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/evalevaleval.jpg?raw=true)
 
 To assess how well the model generalizes, we evaluate it on a separate **test dataset** after training. Key metrics such as **accuracy, precision, recall, and F1-score** are used to measure predictive ability. The test results allow us to determine if the model effectively captures stock price movements or if additional improvements are needed. Below is an example of the model’s performance evaluation.
 
 ---
 
-![image.png](Evaluation%20of%20the%20$3%20Transformer%20%F0%9F%92%B8%201bcf8928b50a806c96fad60745a5cb28/44bdff07-5c6f-4804-a194-286a0ceb3503.png)
+![image.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/lastepcohs21.png?raw=true)
 
 ---
 
@@ -207,11 +207,11 @@ The model demonstrates steady learning, stabilizing at **55.04% accuracy** by **
 
 # A few more features 😎
 
-![image.png](Evaluation%20of%20the%20$3%20Transformer%20%F0%9F%92%B8%201bcf8928b50a806c96fad60745a5cb28/image.png)
+![image.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/Cosinecurve.jpg?raw=true)
 
 (Graph Courtesy if ChatGPT)
 
-![image.png](Evaluation%20of%20the%20$3%20Transformer%20%F0%9F%92%B8%201bcf8928b50a806c96fad60745a5cb28/image%201.png)
+![image.png](https://github.com/Marques-079/dynamictransformerV2/blob/main/images/Warmupcosine.jpg?raw=true)
 
 Cosine Learning Rate Decay & Warmup
 
